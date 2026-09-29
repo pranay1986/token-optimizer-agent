@@ -1,0 +1,94 @@
+{
+  "scenarios": {
+    "Short (10 msgs)": {
+      "before": 385,
+      "after": 373,
+      "saved": 12,
+      "savings_pct": 3.116883116883117,
+      "cache_hit": false,
+      "budget_action": "none"
+    },
+    "Medium (50 msgs)": {
+      "before": 2144,
+      "after": 2078,
+      "saved": 66,
+      "savings_pct": 3.078358208955224,
+      "cache_hit": false,
+      "budget_action": "none"
+    },
+    "Long (200 msgs)": {
+      "before": 8695,
+      "after": 5249,
+      "saved": 3446,
+      "savings_pct": 39.63197239792984,
+      "cache_hit": false,
+      "budget_action": "none"
+    },
+    "Code-heavy (100 msgs)": {
+      "before": 37827,
+      "after": 28,
+      "saved": 37799,
+      "savings_pct": 99.92597879821292,
+      "cache_hit": false,
+      "budget_action": "none"
+    },
+    "High redundancy (100 msgs)": {
+      "before": 9629,
+      "after": 6154,
+      "saved": 3475,
+      "savings_pct": 36.08889812026171,
+      "cache_hit": false,
+      "budget_action": "warn"
+    }
+  },
+  "cache": {
+    "total_queries": 50,
+    "cache_hits": 0,
+    "hit_rate": 0.0,
+    "tokens_saved": 0
+  },
+  "budget": [
+    {
+      "num_messages": 10,
+      "before": 393,
+      "after": 380,
+      "saved": 13,
+      "action": "none"
+    },
+    {
+      "num_messages": 25,
+      "before": 1027,
+      "after": 993,
+      "saved": 34,
+      "action": "none"
+    },
+    {
+      "num_messages": 50,
+      "before": 2206,
+      "after": 1275,
+      "saved": 931,
+      "action": "none"
+    },
+    {
+      "num_messages": 100,
+      "before": 4396,
+      "after": 28,
+      "saved": 4368,
+      "action": "none"
+    },
+    {
+      "num_messages": 200,
+      "before": 9218,
+      "after": 28,
+      "saved": 9190,
+      "action": "none"
+    },
+    {
+      "num_messages": 500,
+      "before": 20973,
+      "after": 28,
+      "saved": 20945,
+      "action": "none"
+    }
+  ]
+}
