@@ -7,13 +7,15 @@ An agentic system that reduces LLM token usage through:
   3. Semantic caching  — avoids re-processing similar prompts
 """
 
-from .agent import TokenOptimizerAgent
-from .budget_manager import BudgetManager
+from .agent import AgentConfig, TokenOptimizerAgent
+from .budget_manager import BudgetConfig, BudgetManager
 from .context_optimizer import ContextOptimizer
 from .semantic_cache import SemanticCache
 from .token_counter import TokenCounter
 
 __all__ = [
+    "AgentConfig",
+    "BudgetConfig",
     "TokenOptimizerAgent",
     "BudgetManager",
     "ContextOptimizer",
