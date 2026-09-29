@@ -12,7 +12,7 @@ An agentic Python system that reduces LLM token usage through three complementar
 
 ```bash
 cd token-optimizer
-pip install -r requirements.txt
+pip install -e .
 ```
 
 ## Quick Start
@@ -28,6 +28,9 @@ python -m token_optimizer.cli optimize examples/sample_messages.json
 
 # Run the demo
 python -m token_optimizer.cli demo
+
+# Run benchmarks and generate plots
+python benchmark.py
 ```
 
 ### Python API
@@ -133,6 +136,60 @@ stats = agent.get_stats()
 # }
 ```
 
+## Benchmark Results
+
+Run `python benchmark.py` to generate plots showing:
+
+- **Scenario comparison** — token savings across short/medium/long/code-heavy/redundant conversations
+- **Model comparison** — context windows and pricing across 12 popular models
+- **Cost savings** — dollar impact of 30% token reduction per model
+- **Budget enforcement** — how the system behaves as conversations grow
+- **Cache performance** — hit rates and tokens saved
+- **Strategy breakdown** — individual contribution of each optimization strategy
+
+## GitHub Repository
+
+### Push to GitHub
+
+```bash
+# Create a new repository on GitHub, then:
+git remote add origin https://github.com/YOUR_USERNAME/token-optimizer-agent.git
+git branch -M main
+git push -u origin main
+```
+
+### Clone and Run
+
+```bash
+git clone https://github.com/YOUR_USERNAME/token-optimizer-agent.git
+cd token-optimizer-agent
+pip install -e .
+python -m token_optimizer.cli demo
+python benchmark.py
+```
+
+## Project Structure
+
+```
+token-optimizer/
+├── token_optimizer/
+│   ├── __init__.py          # Package exports
+│   ├── agent.py             # Main orchestrator
+│   ├── budget_manager.py    # Budget enforcement
+│   ├── context_optimizer.py # Context optimization
+│   ├── semantic_cache.py    # Semantic caching
+│   ├── token_counter.py     # Token counting
+│   └── cli.py               # CLI interface
+├── tests/
+│   └── test_agent.py        # Unit tests
+├── examples/
+│   └── sample_messages.json # Example input
+├── benchmark.py             # Benchmark suite
+├── benchmark_results/       # Generated plots
+├── pyproject.toml           # Package config
+└── README.md
+```
+
 ## Production Tips
 
 1. **Replace the embedding** in `semantic_cache.py` with a real model (OpenAI `text-embedding-3-small`, `sentence-transformers`, etc.)
@@ -140,3 +197,7 @@ stats = agent.get_stats()
 3. **Persist the cache** to disk (Redis, SQLite) across sessions
 4. **Tune thresholds** based on your model's context window and typical usage patterns
 5. **Monitor stats** in production to find the sweet spot for your workload
+
+## License
+
+MIT
