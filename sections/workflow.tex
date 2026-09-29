@@ -1,0 +1,84 @@
+\section{Workflow}
+\label{sec:workflow}
+
+\subsection{Agent Architecture}
+
+The Token Optimizer Agent is implemented as a modular Python package with the following components:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=1.5cm and 2cm,
+    box/.style={rectangle, draw, rounded corners, minimum width=2.5cm, minimum height=1cm, align=center, fill=blue!10},
+    arrow/.style={->, thick, >=stealth}
+]
+\node[box] (input) {Input\\Messages};
+\node[box, right=of input] (cache) {Semantic\\Cache};
+\node[box, right=of cache] (opt) {Context\\Optimizer};
+\node[box, right=of opt] (budget) {Budget\\Manager};
+\node[box, right=of budget] (output) {Output\\Messages};
+
+\draw[arrow] (input) -- (cache);
+\draw[arrow] (cache) -- node[above] {\scriptsize miss} (opt);
+\draw[arrow] (opt) -- (budget);
+\draw[arrow] (budget) -- (output);
+\draw[arrow] (cache.west) to[out=180, in=180, looseness=0.5] node[below] {\scriptsize hit} (output.south);
+\end{tikzpicture}
+\caption{Token Optimizer Agent processing pipeline}
+\label{fig:pipeline}
+\end{figure}
+
+\subsection{Processing Pipeline}
+
+The agent processes messages through three stages:
+
+\subsubsection{Stage 1: Semantic Cache Check}
+
+The last user message is extracted and embedded. The cache is queried for similar entries. If a cache hit occurs (similarity $\geq \tau$), the cached response is returned immediately, bypassing all subsequent stages. This results in zero LLM token consumption for the current turn.
+
+\subsubsection{Stage 2: Context Optimization}
+
+If the cache misses, the full message list is passed through the context optimizer. Each strategy is applied sequentially, and the token count is measured before and after each strategy. Strategies that do not reduce token count are skipped.
+
+\subsubsection{Stage 3: Budget Enforcement}
+
+The optimized message list is checked against the budget. If the token count exceeds the soft limit, summarization is applied. If it exceeds the hard limit, truncation is applied. If it exceeds 95\% of the hard limit, the conversation is reset.
+
+\subsection{Configuration}
+
+The agent is configured through a single \texttt{AgentConfig} dataclass:
+
+\begin{lstlisting}[language=Python, caption=Agent configuration]
+@dataclass
+class AgentConfig:
+    soft_limit: int = 8000
+    hard_limit: int = 12000
+    cache_similarity_threshold: float = 0.85
+    cache_max_entries: int = 1000
+    auto_optimize: bool = True
+    optimization_strategies: list[str] | None = None
+\end{lstlisting}
+
+\subsection{Integration}
+
+The agent can be integrated into existing LLM pipelines with minimal code changes:
+
+\begin{lstlisting}[language=Python, caption=Integration example]
+from token_optimizer import TokenOptimizerAgent
+
+agent = TokenOptimizerAgent()
+
+# Before: direct LLM call
+# response = llm.chat(messages)
+
+# After: optimized call
+result = agent.process(messages)
+if result.cache_hit:
+    response = result.messages[-1]["content"]
+else:
+    response = llm.chat(result.messages)
+\end{lstlisting}
+
+\subsection{Model Agnosticism}
+
+The framework operates entirely at the message level, making it compatible with any LLM API that accepts OpenAI-style message lists. No model-specific modifications are required.

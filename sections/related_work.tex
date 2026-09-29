@@ -1,0 +1,24 @@
+\section{Related Work}
+\label{sec:related_work}
+
+\subsection{LLM Cost Optimization}
+
+The growing cost of LLM inference has spawned significant research into optimization strategies. \citet{dao2022} introduced FlashAttention, which reduces memory usage and computational cost through IO-aware attention mechanisms. While FlashAttention optimizes the model internals, our approach operates at the conversation level, making it complementary to such low-level optimizations.
+
+\citet{lewis2020} proposed Retrieval-Augmented Generation (RAG), which reduces the need for long contexts by retrieving relevant information from external knowledge bases. Our semantic caching strategy shares the spirit of RAG---avoiding redundant computation---but operates at the conversation level rather than the knowledge level.
+
+\subsection{Prompt Compression}
+
+Several works have explored prompt compression techniques. LLMLingua uses small language models to compress prompts while preserving key information. Selective context pruning removes irrelevant tokens based on attention scores. Our context optimizer differs by applying a suite of lightweight, rule-based strategies that require no additional model calls, making them suitable for latency-sensitive applications.
+
+\subsection{Caching Strategies}
+
+Semantic caching has been explored in various forms. GPTCache stores embeddings of queries and responses, returning cached results when similarity exceeds a threshold. Our semantic cache implements a similar concept but uses a lightweight bag-of-words embedding that requires no external API calls, making it suitable for privacy-sensitive deployments.
+
+\subsection{Context Window Management}
+
+Managing context windows effectively is critical for long conversations. Strategies include sliding windows, hierarchical summarization, and token budgeting. Our budget manager implements a tiered approach with configurable thresholds, providing fine-grained control over the trade-off between context preservation and token consumption.
+
+\subsection{Positioning}
+
+Unlike prior work that focuses on single strategies, our framework provides a unified, agentic approach that combines multiple orthogonal optimizations. The modular design allows users to enable or disable individual strategies based on their specific constraints, making the framework adaptable to diverse deployment scenarios.

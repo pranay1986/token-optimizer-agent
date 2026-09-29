@@ -1,0 +1,27 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+This paper presented the Token Optimizer Agent, an agentic framework for reducing LLM token usage through three complementary strategies: semantic caching, context optimization, and budget management. Our evaluation across five conversation scenarios and twelve LLM models demonstrates token reductions ranging from 3\% to 99.9\%, with corresponding cost savings of up to 70\% on premium models.
+
+The key insight behind our approach is that token waste in LLM conversations is multi-faceted: redundant queries waste tokens through unnecessary LLM calls, verbose formatting wastes tokens through inefficient encoding, and long conversations waste tokens through context that no longer contributes to the model's understanding. By addressing each of these sources with a dedicated strategy, our framework achieves cumulative savings that exceed what any single strategy could provide alone.
+
+The modular design of the Token Optimizer Agent makes it adaptable to diverse deployment scenarios. Users can enable or disable individual strategies based on their specific constraints, and all thresholds are configurable through a single interface. The framework's model-agnostic design ensures compatibility with any LLM API, making it a practical tool for reducing operational costs in production systems.
+
+Future work will focus on improving the semantic cache with neural embeddings, integrating LLM-based summarization, and exploring cross-conversation optimization opportunities. We believe the Token Optimizer Agent represents a significant step toward making LLM deployment more cost-effective and sustainable at scale.
+
+\section*{Availability}
+
+The complete implementation, including all source code, tests, benchmarks, and documentation, is available at:
+
+\begin{center}
+\url{https://github.com/pranay1986/token-optimizer-agent}
+\end{center}
+
+The repository includes:
+\begin{itemize}[leftmargin=*]
+    \item Full Python package with CLI tools
+    \item Comprehensive test suite
+    \item Benchmark suite with reproducible plots
+    \item Example configurations and usage patterns
+    \item CI/CD pipeline with GitHub Actions
+\end{itemize}

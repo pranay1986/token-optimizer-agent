@@ -1,0 +1,110 @@
+\section{Appendix}
+
+\subsection{Installation}
+
+\begin{lstlisting}[language=bash, caption=Installation instructions]
+git clone https://github.com/pranay1986/token-optimizer-agent.git
+cd token-optimizer-agent
+pip install -e .
+\end{lstlisting}
+
+\subsection{CLI Usage}
+
+\begin{lstlisting}[language=bash, caption=CLI commands]
+# Count tokens
+python -m token_optimizer.cli count examples/sample_messages.json
+
+# Optimize messages
+python -m token_optimizer.cli optimize examples/sample_messages.json
+
+# Run demo
+python -m token_optimizer.cli demo
+
+# Run benchmarks
+python benchmark.py
+\end{lstlisting}
+
+\subsection{Python API}
+
+\begin{lstlisting}[language=Python, caption=Basic usage]
+from token_optimizer import TokenOptimizerAgent, AgentConfig
+
+config = AgentConfig(
+    soft_limit=8000,
+    hard_limit=12000,
+    cache_similarity_threshold=0.85,
+    auto_optimize=True,
+)
+
+agent = TokenOptimizerAgent(config=config)
+
+messages = [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "What is Python?"},
+    {"role": "assistant", "content": "Python is a programming language."},
+]
+
+result = agent.process(messages)
+
+print(f"Tokens: {result.total_tokens_before} -> {result.total_tokens_after}")
+print(f"Saved: {result.tokens_saved} ({result.savings_pct:.1f}%)")
+print(f"Cache: {'HIT' if result.cache_hit else 'miss'}")
+print(f"Budget: {result.budget_status.message}")
+\end{lstlisting}
+
+\subsection{Configuration Reference}
+
+\begin{table}[H]
+\centering
+\caption{Configuration parameters}
+\label{tab:config}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Type} & \textbf{Default} & \textbf{Description} \\
+\midrule
+soft\_limit & int & 8000 & Soft token budget \\
+hard\_limit & int & 12000 & Hard token budget \\
+cache\_similarity\_threshold & float & 0.85 & Cache match threshold \\
+cache\_max\_entries & int & 1000 & Max cache entries \\
+auto\_optimize & bool & True & Enable auto-optimization \\
+optimization\_strategies & list & None & Active strategies \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Model Pricing Reference}
+
+\begin{table}[H]
+\centering
+\caption{Model context windows and pricing (per 1K tokens)}
+\label{tab:models}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Model} & \textbf{Context} & \textbf{Input Price} \\
+\midrule
+GPT-3.5-turbo & 16,385 & \$0.0005 \\
+GPT-4 & 8,192 & \$0.0300 \\
+GPT-4-turbo & 128,000 & \$0.0100 \\
+GPT-4o & 128,000 & \$0.0025 \\
+Claude-3-Haiku & 200,000 & \$0.00025 \\
+Claude-3-Sonnet & 200,000 & \$0.0030 \\
+Claude-3-Opus & 200,000 & \$0.0150 \\
+Llama-2-7B & 4,096 & \$0.0001 \\
+Llama-2-13B & 4,096 & \$0.00025 \\
+Llama-2-70B & 4,096 & \$0.0010 \\
+Mistral-7B & 8,192 & \$0.0002 \\
+Gemini-Pro & 32,768 & \$0.00025 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Reproducibility}
+
+All results in this paper can be reproduced by running:
+
+\begin{lstlisting}[language=bash, caption=Reproducing results]
+cd token-optimizer-agent
+python benchmark.py
+\end{lstlisting}
+
+This generates all plots and metrics in the \texttt{benchmark\_results/} directory.

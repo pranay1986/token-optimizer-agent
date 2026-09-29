@@ -1,0 +1,112 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{natbib}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, fit, backgrounds}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    citecolor=blue,
+}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{gray!10},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    framesep=5pt,
+    rulecolor=\color{gray!50},
+    xleftmargin=10pt,
+    xrightmargin=10pt,
+    aboveskip=10pt,
+    belowskip=10pt,
+}
+\lstset{style=mystyle}
+
+\title{\textbf{Token Optimizer Agent: An Agentic Framework for Reducing LLM Token Usage Through Semantic Caching, Context Optimization, and Budget Management}}
+
+\author{
+    Token Optimizer Research Team \\
+    \texttt{agent@token-optimizer.dev}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Large Language Models (LLMs) have become indispensable tools for natural language processing tasks, yet their operational costs---measured in tokens consumed---remain a significant barrier to widespread adoption. This paper presents the \textbf{Token Optimizer Agent}, an agentic framework that systematically reduces LLM token usage through three complementary strategies: semantic caching, context optimization, and budget management. Our approach achieves token reductions of 3--99\% across diverse conversation scenarios, with particularly strong results in code-heavy (99.9\% reduction) and long conversations (39.6\% reduction). We provide a comprehensive evaluation across 12 popular LLM models, demonstrating cost savings of up to 70\% on premium models such as GPT-4 and Claude-3-Opus. The framework is designed to be model-agnostic, requiring no changes to underlying LLM architectures, and can be integrated into existing pipelines with minimal overhead. We release our implementation as an open-source Python package to facilitate reproducibility and community adoption.
+\end{abstract}
+
+\noindent\textbf{Keywords:} LLM optimization, token reduction, semantic caching, context management, budget enforcement, cost reduction
+
+\tableofcontents
+\newpage
+
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/methodology}
+\input{sections/workflow}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections{conclusion}
+
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem{brown2020}
+Brown, T.~B., et al. (2020).
+Language models are few-shot learners.
+\textit{Advances in Neural Information Processing Systems}, 33, 1877--1901.
+
+\bibitem{openai2023}
+OpenAI. (2023).
+GPT-4 technical report.
+\textit{arXiv preprint arXiv:2303.08774}.
+
+\bibitem{anthropic2024}
+Anthropic. (2024).
+The Claude 3 model family.
+\textit{Anthropic Technical Report}.
+
+\bibitem{tiktoken}
+OpenAI. (2023).
+\textit{tiktoken: Fast BPE tokenization for use with OpenAI's models}.
+\url{https://github.com/openai/tiktoken}
+
+\bibitem{lewis2020}
+Lewis, P., et al. (2020).
+Retrieval-augmented generation for knowledge-intensive NLP tasks.
+\textit{Advances in Neural Information Processing Systems}, 33, 9459--9474.
+
+\bibitem{dao2022}
+Dao, T., et al. (2022).
+FlashAttention: Fast and memory-efficient exact attention with IO-awareness.
+\textit{Advances in Neural Information Processing Systems}, 35, 16344--16359.
+
+\end{thebibliography}
+
+\appendix
+\input{sections/appendix}
+
+\end{document}

@@ -1,0 +1,103 @@
+\section{Methodology}
+\label{sec:methodology}
+
+The Token Optimizer Agent employs three orthogonal strategies to reduce token usage. Each strategy addresses a distinct source of token waste, and they can be composed in a pipeline for cumulative savings.
+
+\subsection{Semantic Cache}
+
+The semantic cache eliminates redundant LLM calls by detecting when a new query is similar to a previously processed query. The cache operates in three phases:
+
+\subsubsection{Embedding Generation}
+
+Each query is embedded into a fixed-dimensional vector space. We employ a bag-of-words embedding scheme:
+
+\begin{equation}
+    \mathbf{e}(q) = \text{normalize}\left(\sum_{w \in \text{tokenize}(q)} \mathbf{h}(w)\right)
+\end{equation}
+
+where $\mathbf{h}(w)$ is a hash-based one-hot vector for word $w$, and normalization ensures $\|\mathbf{e}(q)\|_2 = 1$. This approach requires no external API calls and produces deterministic embeddings.
+
+\subsubsection{Similarity Computation}
+
+Given a query embedding $\mathbf{e}_q$ and a cached embedding $\mathbf{e}_c$, we compute cosine similarity:
+
+\begin{equation}
+    \text{sim}(\mathbf{e}_q, \mathbf{e}_c) = \frac{\mathbf{e}_q \cdot \mathbf{e}_c}{\|\mathbf{e}_q\| \|\mathbf{e}_c\|}
+\end{equation}
+
+A cache hit occurs when $\text{sim}(\mathbf{e}_q, \mathbf{e}_c) \geq \tau$, where $\tau$ is a configurable threshold (default: 0.85).
+
+\subsubsection{Cache Eviction}
+
+When the cache reaches capacity $C_{\max}$, the oldest entry is evicted (LRU policy). This ensures the cache remains responsive to recent queries while bounding memory usage.
+
+\subsection{Context Optimizer}
+
+The context optimizer applies five strategies sequentially to reduce token count:
+
+\subsubsection{Deduplication}
+
+Consecutive messages with identical role and content are removed. This addresses a common pattern in agentic systems where the same message may be appended multiple times due to retry logic or state management bugs.
+
+\begin{equation}
+    \text{dedup}(M) = [m_i \in M \mid m_i \neq m_{i-1}]
+\end{equation}
+
+\subsubsection{Whitespace Normalization}
+
+Excessive whitespace (3+ consecutive newlines) is collapsed to double newlines, and trailing whitespace is stripped per line. This addresses verbose formatting that consumes tokens without adding semantic value.
+
+\subsubsection{System Message Merging}
+
+Consecutive system messages are merged into a single message. This is particularly useful when multiple system prompts are appended by different components of an agent framework.
+
+\subsubsection{Tool Result Truncation}
+
+Tool result messages exceeding $L_{\max}$ characters are truncated, preserving the head and tail:
+
+\begin{equation}
+    \text{trunc}(c) = \begin{cases}
+        c[:L/2] + \texttt{[truncated]} + c[-L/2:] & \text{if } |c| > L_{\max} \\
+        c & \text{otherwise}
+    \end{cases}
+\end{equation}
+
+\subsubsection{Code Block Pruning}
+
+Code blocks exceeding $N_{\max}$ lines are truncated, preserving the first and last $N_{\max}/2$ lines. This is critical for code-heavy conversations where generated code can span hundreds of lines.
+
+\subsection{Budget Manager}
+
+The budget manager enforces token budgets through a tiered threshold system:
+
+\begin{table}[H]
+\centering
+\caption{Budget enforcement thresholds and actions}
+\label{tab:budget}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Threshold} & \textbf{Action} & \textbf{Description} \\
+\midrule
+$\geq 0.75 \times S$ & Warn & Log warning, no modification \\
+$\geq S$ & Summarize & Compress older messages into summary \\
+$\geq H$ & Truncate & Drop oldest messages until under $S$ \\
+$\geq 0.95 \times H$ & Hard Stop & Reset conversation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+where $S$ is the soft limit and $H$ is the hard limit.
+
+\subsubsection{Summarization}
+
+When the soft limit is reached, older messages are compressed into a summary using an extractive approach:
+
+\begin{equation}
+    \text{summary}(M_{\text{old}}) = \bigoplus_{m \in M_{\text{old}}} \text{first\_sentence}(m)
+\end{equation}
+
+In production deployments, this can be replaced with an LLM-based abstractive summarizer for higher-quality compression.
+
+\subsubsection{Truncation}
+
+When the hard limit is reached, the oldest non-system messages are dropped iteratively until the token count falls below the soft limit. System messages are always preserved to maintain behavioral constraints.

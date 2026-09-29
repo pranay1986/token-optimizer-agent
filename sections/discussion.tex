@@ -1,0 +1,45 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Advantages}
+
+The Token Optimizer Agent offers several key advantages:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Model Agnostic:} The framework operates at the message level and works with any LLM API.
+    \item \textbf{Modular:} Each strategy can be enabled or disabled independently.
+    \item \textbf{Low Overhead:} The bag-of-words embedding and rule-based optimizations add negligible latency.
+    \item \textbf{Configurable:} All thresholds and limits are configurable through a single dataclass.
+    \item \textbf{Observable:} Detailed statistics are provided for monitoring and debugging.
+\end{enumerate}
+
+\subsection{Limitations}
+
+Several limitations should be acknowledged:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Bag-of-Words Embedding:} The current semantic cache uses a simple bag-of-words embedding that may miss semantic similarity between paraphrases. Replacing this with a real embedding model would improve cache hit rates.
+    \item \textbf{Extractive Summarization:} The default summarizer uses extractive methods that may lose nuance. LLM-based abstractive summarization would produce higher-quality summaries at the cost of additional token consumption.
+    \item \textbf{No Semantic Understanding:} The context optimizer applies rule-based transformations that do not understand message semantics. This may miss opportunities for more aggressive compression.
+    \item \textbf{Single-Turn Optimization:} The current implementation optimizes each turn independently. Cross-turn optimization (e.g., caching common prefixes) could yield additional savings.
+\end{enumerate}
+
+\subsection{Threats to Validity}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Synthetic Data:} Our benchmarks use synthetic conversations that may not fully represent real-world usage patterns.
+    \item \textbf{Token Counting:} We use tiktoken's \texttt{cl100k\_base} encoding, which may not match the tokenization of all models exactly.
+    \item \textbf{Cost Projections:} Cost savings are based on published pricing, which may change over time.
+\end{itemize}
+
+\subsection{Future Work}
+
+Several directions for future research include:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Neural Embeddings:} Replace bag-of-words with transformer-based embeddings for improved semantic matching.
+    \item \textbf{LLM-Based Summarization:} Integrate an LLM call for higher-quality summarization when the soft limit is reached.
+    \item \textbf{Predictive Budgeting:} Use conversation length prediction to proactively trigger optimization before limits are reached.
+    \item \textbf{Cross-Conversation Caching:} Share cache entries across similar conversations to improve hit rates.
+    \item \textbf{Adaptive Thresholds:} Dynamically adjust optimization aggressiveness based on conversation context and user preferences.
+\end{enumerate}
